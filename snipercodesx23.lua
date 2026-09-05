@@ -110,11 +110,47 @@ local function verify()
     end
     local success = response.Success or (response.StatusCode and response.StatusCode >= 200 and response.StatusCode < 300)
     local parsed, data = pcall(function() return HttpService:JSONDecode(response.Body) end)
-    if not success or not parsed or type(data) ~= "table" or not data.valid then
-        status.Text = (parsed and data and data.message) or "Key inválida(REVISA QUE ESTE BIEN PUESTA)"
-        busy = false
-        button.Text = "Verificando Key"
-        return
+   status.Text = "Descargando HUB..."
+task.wait(0.2)
+
+local okHttp, hubSource = pcall(function()
+    return game:HttpGet(HUB_URL)
+end)
+
+if not okHttp then
+    status.Text = "Error descargando HUB"
+    warn("[X23] HttpGet HUB:", hubSource)
+    busy = false
+    button.Text = "Verificar key del clon"
+    return
+end
+
+print("[X23] HUB descargado:", #hubSource)
+
+local hubFunction, compileError = loadstring(hubSource)
+
+if not hubFunction then
+    status.Text = "Error compilando HUB"
+    warn("[X23] Compilación HUB:", compileError)
+    busy = false
+    button.Text = "Verificar key del clon"
+    return
+end
+
+print("[X23] HUB compilado correctamente")
+
+local okRun, runError = pcall(hubFunction)
+
+if not okRun then
+    status.Text = "Error ejecutando HUB"
+    warn("[X23] EJECUCION HUB:", runError)
+    busy = false
+    button.Text = "Verificar key del clon"
+    return
+end
+
+print("[X23] HUB ejecutado correctamente")
+gui:Destroy()
     end
     status.Text = "Acceso concedido"
     status.TextColor3 = Color3.fromRGB(80, 255, 160)
