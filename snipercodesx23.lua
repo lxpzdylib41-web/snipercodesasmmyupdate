@@ -1,6 +1,3 @@
-```lua
--- X23 PREMIUM LOADER
-
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
@@ -488,4 +485,3 @@ input.FocusLost:Connect(function(enterPressed)
     end
 
 end)
-```
