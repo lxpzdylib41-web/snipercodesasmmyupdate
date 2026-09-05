@@ -233,7 +233,7 @@ label(
 
 label(
     box,
-    "HUB PREMIUM EDITION V2",
+    "ESCRIBE TU KEY PARA ACCEDER",
     UDim2.new(1, -30, 0, 28),
     UDim2.new(0, 15, 0, 48),
     Color3.fromRGB(
