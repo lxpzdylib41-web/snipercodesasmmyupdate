@@ -1,248 +1,134 @@
--- ================================================================
--- X23 HUB LOADER — PC + MOBILE
--- Sube este archivo a GitHub y comparte su URL raw
--- Compatible con: Synapse X, KRNL, Fluxus, Solara, Delta
--- ================================================================
-
-local API_URL = "https://0df0d4ce-f84e-423b-971d-a243eea7e01f-00-1pzapgoozo9mk.picard.replit.dev/api/keys/validate"
-local HUB_URL = "https://raw.githubusercontent.com/lxpzdylib41-web/cookiesxduels/main/cookiesxacecodetyper.lua"
+-- X23 HUB LOADER CLON — usa keys x23-clone
+-- Es el segundo producto: una key x23-main NO funciona aquí.
 
 local HttpService = game:GetService("HttpService")
-local player      = game.Players.LocalPlayer
-local playerGui   = player.PlayerGui
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player.PlayerGui
+local PRODUCT_ID = "x23-clone"
+local API_URL = "https://0df0d4ce-f84e-423b-971d-a243eea7e01f-00-1pzapgoozo9mk.picard.replit.dev/api/keys/validate"
+local HUB_URL = "https://raw.githubusercontent.com/lxpzdylib41-web/code-tapex/main/x23hub.lua"
 
--- ── HTTP compatible con todos los executors ──────────────────
-local function httpPost(url, body)
+local function getHWID()
+    local ok, value = pcall(function()
+        if typeof(gethwid) == "function" then return gethwid() end
+        if typeof(getfingerprint) == "function" then return getfingerprint() end
+        return game:GetService("RbxAnalyticsService"):GetClientId()
+    end)
+    if ok and value and tostring(value) ~= "" then return tostring(value) end
+    return nil
+end
+
+local function post(body)
     local encoded = HttpService:JSONEncode(body)
-    local headers = { ["Content-Type"] = "application/json" }
-    if syn and syn.request then
-        return syn.request({ Url=url, Method="POST", Headers=headers, Body=encoded })
-    end
-    if request then
-        return request({ Url=url, Method="POST", Headers=headers, Body=encoded })
-    end
-    if http and http.request then
-        return http.request({ Url=url, Method="POST", Headers=headers, Body=encoded })
-    end
-    return HttpService:RequestAsync({ Url=url, Method="POST", Headers=headers, Body=encoded })
+    local options = {
+        Url = API_URL,
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = encoded,
+    }
+    if typeof(syn) == "table" and typeof(syn.request) == "function" then return syn.request(options) end
+    if typeof(request) == "function" then return request(options) end
+    return HttpService:RequestAsync(options)
 end
 
--- ── Limpiar instancia anterior ────────────────────────────────
-if playerGui:FindFirstChild("X23Loader") then
-    playerGui.X23Loader:Destroy()
+local function label(parent, text, size, position, color)
+    local item = Instance.new("TextLabel")
+    item.BackgroundTransparency = 1
+    item.Size = size
+    item.Position = position
+    item.Text = text
+    item.TextColor3 = color
+    item.Font = Enum.Font.Gotham
+    item.TextSize = 13
+    item.Parent = parent
+    return item
 end
 
--- ── ScreenGui ────────────────────────────────────────────────
+local old = playerGui:FindFirstChild("X23CloneLoader")
+if old then old:Destroy() end
+
 local gui = Instance.new("ScreenGui")
-gui.Name            = "X23Loader"
-gui.ResetOnSpawn    = false
-gui.DisplayOrder    = 999
-gui.Parent          = playerGui
+gui.Name = "X23CloneLoader"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
 
--- Fondo semiopaco
-local overlay = Instance.new("Frame")
-overlay.Size                  = UDim2.new(1, 0, 1, 0)
-overlay.BackgroundColor3      = Color3.fromRGB(0, 0, 0)
-overlay.BackgroundTransparency = 0.45
-overlay.BorderSizePixel       = 0
-overlay.Parent                = gui
-
--- Ventana centrada — ancha para móvil
-local win = Instance.new("Frame")
-win.Size             = UDim2.new(0, 360, 0, 285)
-win.Position         = UDim2.new(0.5, -180, 0.5, -142)
-win.BackgroundColor3 = Color3.fromRGB(9, 9, 13)
-win.BorderSizePixel  = 0
-win.Parent           = gui
-Instance.new("UICorner", win).CornerRadius = UDim.new(0, 18)
+local box = Instance.new("Frame")
+box.Size = UDim2.new(0, 340, 0, 205)
+box.Position = UDim2.new(0.5, -170, 0.5, -102)
+box.BackgroundColor3 = Color3.fromRGB(12, 10, 20)
+box.BorderSizePixel = 0
+box.Parent = gui
+Instance.new("UICorner", box).CornerRadius = UDim.new(0, 14)
 
 local stroke = Instance.new("UIStroke")
-stroke.Color     = Color3.fromRGB(0, 200, 255)
+stroke.Color = Color3.fromRGB(170, 80, 255)
 stroke.Thickness = 2
-stroke.Parent    = win
+stroke.Parent = box
 
--- ── Ícono / logo ─────────────────────────────────────────────
--- 🔁 Cambia este ID por tu imagen
-local logo = Instance.new("ImageLabel")
-logo.Size                  = UDim2.new(0, 48, 0, 48)
-logo.Position              = UDim2.new(0.5, -24, 0, 14)
-logo.BackgroundTransparency = 1
-logo.Image                 = "rbxassetid://101579838151121"
-logo.ImageColor3           = Color3.fromRGB(0, 220, 255)
-logo.ScaleType             = Enum.ScaleType.Fit
-logo.Parent                = win
-
--- ── Título ───────────────────────────────────────────────────
-local title = Instance.new("TextLabel")
-title.Size                  = UDim2.new(1, 0, 0, 28)
-title.Position              = UDim2.new(0, 0, 0, 66)
-title.BackgroundTransparency = 1
-title.Text                  = "💎 X23 HUB"
-title.TextColor3            = Color3.fromRGB(0, 220, 255)
-title.Font                  = Enum.Font.GothamBold
-title.TextSize              = 19
-title.Parent                = win
-
-local sub = Instance.new("TextLabel")
-sub.Size                  = UDim2.new(1, 0, 0, 18)
-sub.Position              = UDim2.new(0, 0, 0, 95)
-sub.BackgroundTransparency = 1
-sub.Text                  = "Ingresa tu key para continuar"
-sub.TextColor3            = Color3.fromRGB(100, 140, 160)
-sub.Font                  = Enum.Font.Gotham
-sub.TextSize              = 13
-sub.Parent                = win
-
--- ── Input de key (grande para teclado táctil) ─────────────────
-local inputBg = Instance.new("Frame")
-inputBg.Size             = UDim2.new(1, -36, 0, 48)
-inputBg.Position         = UDim2.new(0, 18, 0, 118)
-inputBg.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-inputBg.BorderSizePixel  = 0
-inputBg.Parent           = win
-Instance.new("UICorner", inputBg).CornerRadius = UDim.new(0, 10)
-
-local inputStroke = Instance.new("UIStroke")
-inputStroke.Color     = Color3.fromRGB(40, 60, 80)
-inputStroke.Thickness = 1.4
-inputStroke.Parent    = inputBg
+label(box, "✦ X23 HUB — CLON", UDim2.new(1, 0, 0, 32), UDim2.new(0, 0, 0, 16), Color3.fromRGB(190, 110, 255))
+label(box, "Este loader usa keys exclusivas del segundo script", UDim2.new(1, -30, 0, 28), UDim2.new(0, 15, 0, 48), Color3.fromRGB(150, 130, 170))
 
 local input = Instance.new("TextBox")
-input.Size               = UDim2.new(1, -20, 1, 0)
-input.Position           = UDim2.new(0, 10, 0, 0)
-input.BackgroundTransparency = 1
-input.PlaceholderText    = "X23-XXXX-XXXX-XXXX"
-input.PlaceholderColor3  = Color3.fromRGB(60, 80, 100)
-input.TextColor3         = Color3.fromRGB(220, 240, 255)
-input.Font               = Enum.Font.GothamBold
-input.TextSize           = 16
-input.ClearTextOnFocus   = false
-input.Text               = ""
-input.Parent             = inputBg
+input.Size = UDim2.new(1, -40, 0, 38)
+input.Position = UDim2.new(0, 20, 0, 82)
+input.BackgroundColor3 = Color3.fromRGB(25, 20, 36)
+input.PlaceholderText = "X23-XXXX-XXXX-XXXX"
+input.Text = ""
+input.TextColor3 = Color3.fromRGB(240, 230, 255)
+input.PlaceholderColor3 = Color3.fromRGB(105, 85, 125)
+input.Font = Enum.Font.GothamBold
+input.TextSize = 14
+input.ClearTextOnFocus = false
+input.Parent = box
+Instance.new("UICorner", input).CornerRadius = UDim.new(0, 8)
 
--- ── Botón verificar (alto para que sea fácil de tocar) ────────
-local btn = Instance.new("TextButton")
-btn.Size             = UDim2.new(1, -36, 0, 52)
-btn.Position         = UDim2.new(0, 18, 0, 176)
-btn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
-btn.BorderSizePixel  = 0
-btn.Text             = "Verificar Key"
-btn.TextColor3       = Color3.fromRGB(255, 255, 255)
-btn.Font             = Enum.Font.GothamBold
-btn.TextSize         = 17
-btn.Parent           = win
-Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -40, 0, 36)
+button.Position = UDim2.new(0, 20, 0, 130)
+button.BackgroundColor3 = Color3.fromRGB(135, 55, 210)
+button.Text = "Verificar key del clon"
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 13
+button.Parent = box
+Instance.new("UICorner", button).CornerRadius = UDim.new(0, 8)
 
--- ── Mensaje de estado ─────────────────────────────────────────
-local statusMsg = Instance.new("TextLabel")
-statusMsg.Size                  = UDim2.new(1, -36, 0, 30)
-statusMsg.Position              = UDim2.new(0, 18, 0, 232)
-statusMsg.BackgroundTransparency = 1
-statusMsg.Text                  = ""
-statusMsg.TextColor3            = Color3.fromRGB(255, 80, 80)
-statusMsg.Font                  = Enum.Font.Gotham
-statusMsg.TextSize              = 12
-statusMsg.TextWrapped           = true
-statusMsg.TextXAlignment        = Enum.TextXAlignment.Center
-statusMsg.Parent                = win
+local status = label(box, "", UDim2.new(1, -40, 0, 24), UDim2.new(0, 20, 0, 174), Color3.fromRGB(255, 90, 90))
+status.TextWrapped = true
 
--- Ampliar la ventana para el mensaje de estado
-win.Size = UDim2.new(0, 360, 0, 295)
-
--- ── Animación de borde arcoíris ───────────────────────────────
-local animating = true
-task.spawn(function()
-    while animating do
-        for hue = 0, 1, 0.015 do
-            if not animating then break end
-            local rgb = Color3.fromHSV(hue, 0.75, 1)
-            stroke.Color   = rgb
-            logo.ImageColor3 = rgb
-            task.wait(0.04)
-        end
-    end
-end)
-
--- ── Lógica de verificación ────────────────────────────────────
+local busy = false
 local function verify()
+    if busy then return end
     local key = input.Text:match("^%s*(.-)%s*$")
-    if key == "" then
-        statusMsg.TextColor3 = Color3.fromRGB(255, 200, 0)
-        statusMsg.Text       = "⚠ Escribe tu key primero"
-        return
-    end
-
-    btn.Active           = false
-    btn.Text             = "Verificando..."
-    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-    statusMsg.Text       = ""
-
-    local ok, response = pcall(httpPost, API_URL, { key = key })
-
+    if key == "" then status.Text = "Escribe una key"; return end
+    busy = true
+    button.Text = "Verificando..."
+    local ok, response = pcall(post, { key = key, hwid = getHWID(), productId = PRODUCT_ID })
     if not ok or not response then
-        btn.Active           = true
-        btn.Text             = "Verificar Key"
-        btn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
-        statusMsg.TextColor3 = Color3.fromRGB(255, 80, 80)
-        statusMsg.Text       = "❌ Sin conexión con el servidor. Intenta de nuevo."
+        status.Text = "No se pudo conectar con el servidor"
+        busy = false
+        button.Text = "Verificar key del clon"
         return
     end
-
-    local isOk = response.Success
-        or (response.StatusCode and response.StatusCode >= 200 and response.StatusCode < 300)
-
-    if not isOk then
-        btn.Active           = true
-        btn.Text             = "Verificar Key"
-        btn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
-        statusMsg.TextColor3 = Color3.fromRGB(255, 80, 80)
-        statusMsg.Text       = "❌ Error del servidor (" .. tostring(response.StatusCode or "?") .. ")"
+    local success = response.Success or (response.StatusCode and response.StatusCode >= 200 and response.StatusCode < 300)
+    local parsed, data = pcall(function() return HttpService:JSONDecode(response.Body) end)
+    if not success or not parsed or type(data) ~= "table" or not data.valid then
+        status.Text = (parsed and data and data.message) or "Key inválida para este loader"
+        busy = false
+        button.Text = "Verificar key del clon"
         return
     end
-
-    local parseOk, data = pcall(function()
-        return HttpService:JSONDecode(response.Body)
-    end)
-
-    if not parseOk or type(data) ~= "table" then
-        btn.Active           = true
-        btn.Text             = "Verificar Key"
-        btn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
-        statusMsg.TextColor3 = Color3.fromRGB(255, 80, 80)
-        statusMsg.Text       = "❌ Respuesta inválida del servidor."
-        return
-    end
-
-    if not data.valid then
-        btn.Active           = true
-        btn.Text             = "Verificar Key"
-        btn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
-        statusMsg.TextColor3 = Color3.fromRGB(255, 80, 80)
-        statusMsg.Text       = "❌ " .. (data.message or "Key inválida o expirada")
-        return
-    end
-
-    -- ✅ Key válida — animar y lanzar el hub
-    animating = false
-    task.wait(0.05)
-
-    stroke.Color         = Color3.fromRGB(80, 255, 160)
-    logo.ImageColor3     = Color3.fromRGB(80, 255, 160)
-    btn.BackgroundColor3 = Color3.fromRGB(30, 200, 100)
-    btn.Text             = "✅ Acceso concedido"
-    statusMsg.TextColor3 = Color3.fromRGB(80, 255, 160)
-    statusMsg.Text       = data.type == "timed"
-        and ("Expira: " .. tostring(data.expiresAt or ""):sub(1, 10))
-        or  "Key permanente ✨"
-
-    task.wait(1)
+    status.Text = "Acceso concedido"
+    status.TextColor3 = Color3.fromRGB(80, 255, 160)
+    task.wait(0.8)
     gui:Destroy()
-
-    -- Carga el hub
-    loadstring(game:HttpGet(HUB_URL))()
+    pcall(function()
+        loadstring(game:HttpGet(HUB_URL))()
+    end)
 end
 
-btn.MouseButton1Click:Connect(verify)
-input.FocusLost:Connect(function(enter)
-    if enter then verify() end
+button.MouseButton1Click:Connect(verify)
+input.FocusLost:Connect(function(enterPressed)
+    if enterPressed then verify() end
 end)
