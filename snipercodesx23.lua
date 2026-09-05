@@ -46,7 +46,7 @@ local old = playerGui:FindFirstChild("X23CloneLoader")
 if old then old:Destroy() end
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "X23CloneLoader"
+gui.Name = "X23-Premium Edition"
 gui.ResetOnSpawn = false
 gui.Parent = playerGui
 
@@ -63,8 +63,8 @@ stroke.Color = Color3.fromRGB(170, 80, 255)
 stroke.Thickness = 2
 stroke.Parent = box
 
-label(box, "✦ X23 HUB — CLON", UDim2.new(1, 0, 0, 32), UDim2.new(0, 0, 0, 16), Color3.fromRGB(190, 110, 255))
-label(box, "Este loader usa keys exclusivas del segundo script", UDim2.new(1, -30, 0, 28), UDim2.new(0, 15, 0, 48), Color3.fromRGB(150, 130, 170))
+label(box, X23 HUB-Premium Edition", UDim2.new(1, 0, 0, 32), UDim2.new(0, 0, 0, 16), Color3.fromRGB(190, 110, 255))
+label(box, "HUB PREMIUM EDITION V2", UDim2.new(1, -30, 0, 28), UDim2.new(0, 15, 0, 48), Color3.fromRGB(150, 130, 170))
 
 local input = Instance.new("TextBox")
 input.Size = UDim2.new(1, -40, 0, 38)
@@ -98,22 +98,22 @@ local busy = false
 local function verify()
     if busy then return end
     local key = input.Text:match("^%s*(.-)%s*$")
-    if key == "" then status.Text = "Escribe una key"; return end
+    if key == "" then status.Text = "Escribe tu key"; return end
     busy = true
     button.Text = "Verificando..."
     local ok, response = pcall(post, { key = key, hwid = getHWID(), productId = PRODUCT_ID })
     if not ok or not response then
-        status.Text = "No se pudo conectar con el servidor"
+        status.Text = "Servidor Apagado contactacr con el vendedor"
         busy = false
-        button.Text = "Verificar key del clon"
+        button.Text = "Verificando Key"
         return
     end
     local success = response.Success or (response.StatusCode and response.StatusCode >= 200 and response.StatusCode < 300)
     local parsed, data = pcall(function() return HttpService:JSONDecode(response.Body) end)
     if not success or not parsed or type(data) ~= "table" or not data.valid then
-        status.Text = (parsed and data and data.message) or "Key inválida para este loader"
+        status.Text = (parsed and data and data.message) or "Key inválida(REVISA QUE ESTE BIEN PUESTA)"
         busy = false
-        button.Text = "Verificar key del clon"
+        button.Text = "Verificando Key"
         return
     end
     status.Text = "Acceso concedido"
