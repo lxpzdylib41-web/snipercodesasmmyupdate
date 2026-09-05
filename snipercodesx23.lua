@@ -356,7 +356,7 @@ local function verify()
     -- DOWNLOAD HUB
     --------------------------------------------------
 
-    status.Text = "Descargando HUB..."
+    status.Text = "Verificando Hub"
     status.TextColor3 = Color3.fromRGB(190, 150, 255)
 
     local okHttp, hubSource = pcall(function()
@@ -372,7 +372,7 @@ local function verify()
             hubSource
         )
 
-        status.Text = "Error descargando HUB"
+        status.Text = "Error Conectando"
         status.TextColor3 = Color3.fromRGB(255, 90, 90)
 
         busy = false
@@ -393,7 +393,7 @@ local function verify()
 
     if type(loadstring) ~= "function" then
 
-        warn("[X23] loadstring no disponible")
+        warn("EROR (SCRIPT)")
 
         status.Text = "loadstring no disponible"
         status.TextColor3 = Color3.fromRGB(255, 90, 90)
