@@ -1,11 +1,8 @@
--- X23 HUB LOADER CLON — usa keys x23-clone
--- Es el segundo producto: una key x23-main NO funciona aquí.
-
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
-local PRODUCT_ID = "x23-clone"
+local PRODUCT_ID = "x23-Premium Edition"
 local API_URL = "https://0df0d4ce-f84e-423b-971d-a243eea7e01f-00-1pzapgoozo9mk.picard.replit.dev/api/keys/validate"
 local HUB_URL = "https://raw.githubusercontent.com/lxpzdylib41-web/snipercodesasmmyupdate/main/cookiesxacecodetyper.lua"
 
