@@ -4,7 +4,7 @@ local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
 local PRODUCT_ID = "x23-Premium Edition"
 local API_URL = "https://0df0d4ce-f84e-423b-971d-a243eea7e01f-00-1pzapgoozo9mk.picard.replit.dev/api/keys/validate"
-local HUB_URL = "https://github.com/lxpzdylib41-web/snipercodesasmmyupdate/blob/main/cookiesxacecodetyper.lua
+local HUB_URL = "https://raw.githubusercontent.com/lxpzdylib41-web/cookiesxduels/main/cookiesxacecodetyper.lua"
 
 local function getHWID()
     local ok, value = pcall(function()
